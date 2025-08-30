@@ -1,10 +1,11 @@
 import streamlit as st
+import random
 
 st.set_page_config(page_title="Pakistani Pizza Recipes", page_icon="🍕")
 
 st.title("🍕 Pakistani Pizza Recipes Explorer")
 
-st.write("Discover delicious pizza recipes with a Pakistani twist! Choose a pizza below to see ingredients and preparation steps.")
+st.write("Discover delicious pizza recipes with a Pakistani twist! Choose a pizza below or try a random surprise recipe!")
 
 # Dough recipe (common for all pizzas)
 dough_recipe = {
@@ -113,23 +114,36 @@ recipes = {
     }
 }
 
-# User selection
-pizza_choice = st.selectbox("Choose a pizza", list(recipes.keys()) + ["Pizza Dough (Base Recipe)"])
+# --- Always show dough preparation first ---
+st.subheader("🍞 Pizza Dough Recipe (Base for All Pizzas)")
+
+st.markdown("**Ingredients:**")
+for ingredient in dough_recipe["ingredients"]:
+    st.write(f"- {ingredient}")
+
+st.markdown("**Preparation Steps:**")
+for i, step in enumerate(dough_recipe["steps"], start=1):
+    st.write(f"{i}. {step}")
+
+st.markdown("---")
+
+# --- Pizza selection ---
+col1, col2 = st.columns([2,1])
+with col1:
+    pizza_choice = st.selectbox("Choose a pizza", list(recipes.keys()))
+with col2:
+    surprise = st.button("🍀 Surprise Me!")
+
+# If surprise, override choice with random
+if surprise:
+    pizza_choice = random.choice(list(recipes.keys()))
+    st.success(f"Surprise! Here's a **{pizza_choice}** recipe for you 🍕")
 
 # Show recipe
-if pizza_choice == "Pizza Dough (Base Recipe)":
-    st.subheader("Pizza Dough Recipe (Base for All Pizzas)")
-    st.markdown("**Ingredients:**")
-    for ingredient in dough_recipe["ingredients"]:
-        st.write(f"- {ingredient}")
-    st.markdown("**Preparation Steps:**")
-    for i, step in enumerate(dough_recipe["steps"], start=1):
-        st.write(f"{i}. {step}")
-else:
-    st.subheader(f"{pizza_choice} Recipe")
-    st.markdown("**Ingredients:**")
-    for ingredient in recipes[pizza_choice]["ingredients"]:
-        st.write(f"- {ingredient}")
-    st.markdown("**Preparation Steps:**")
-    for i, step in enumerate(recipes[pizza_choice]["steps"], start=1):
-        st.write(f"{i}. {step}")
+st.subheader(f"{pizza_choice} Recipe")
+st.markdown("**Ingredients:**")
+for ingredient in recipes[pizza_choice]["ingredients"]:
+    st.write(f"- {ingredient}")
+st.markdown("**Preparation Steps:**")
+for i, step in enumerate(recipes[pizza_choice]["steps"], start=1):
+    st.write(f"{i}. {step}")
